@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
 
+from discreteKStest import *
+from findMaxDev import *
+
 
 def s_stepFunction(t,swapPoint):
     
@@ -11,16 +14,16 @@ def s_stepFunction(t,swapPoint):
         return - 0.01
     
 def s_autoReg(c,s):
-    return c * s + np.random.normal(0,0.0001,len(s))
+    return c * s + np.random.normal(0,0.01,len(s))
 
 
 N = 10000  # population size
-p0 = 0.35 # initial frequency
-t = 500 # number of generations
-numTrajectories = 10**4  # number of trajectories
+t = 200 # number of generations
+numTrajectories = 500  # number of trajectories
+p0 =np.random.uniform(0.3, 0.7, numTrajectories) #0.35 # initial frequency
 
-s = 0.01 # using step function, s is initially 0.01
-# s = np.random.normal(0,0.01,numTrajectories); # for autoReg, initially drawing random s values for each traj
+# s = 0.01 # using step function, s is initially 0.01
+s = np.random.normal(0,0.01,numTrajectories); # for autoReg, initially drawing random s values for each traj
 
 p_s = p0 + s * p0 * (1 - p0)  # adjust frequency to incorporate s
 trajectories = np.zeros((t + 1, numTrajectories))  # setting up array to hold all trajectories throughout time
@@ -30,8 +33,8 @@ for i in range(1, t + 1):  # for each generation
     n = np.random.binomial(N, trajectories[i-1])  # draw value from binomial distribution using previous frequencies
     p = n/N  # calculate frequency using number of alleles from above
     
-    s = s_stepFunction(i,t/2)
-    # s = s_autoReg(0.3,s)
+    # s = s_stepFunction(i,t/2)
+    s = s_autoReg(0.1,s)
     
     p_s = p + s * p * (1 - p)  # adjust frequency to incorporate s
     trajectories[i,:] = p_s  # store list of frequencies

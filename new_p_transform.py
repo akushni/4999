@@ -3,9 +3,12 @@ import scipy as sp
 import matplotlib.pyplot as plt
 # import statsmodels.api as sm
 
+from findMaxDev import *
+from discreteKStest import *
+
 N = 10000  # population size
-p0 = 0.35 # initial frequenc
-t = 500 # number of generations
+p0 = np.random.uniform(0.3, 0.7, 10**4) #0.35 # initial frequency
+t = 200 # number of generations
 numTrajectories = 10**4  # number of trajectories
 
 s = 0 #np.random.normal(0,0.001,numTrajectories); # drawing a normally distributed s value for each trajectory
@@ -51,8 +54,12 @@ for i in range(1, t + 1):  # for each generation
     newTrajs[i,:] = newTrajs[i - 1,:] + shuffledIncs[i - 1,:]
     newTransformedTrajs[i,:] = newTransformedTrajs[i - 1,:] + transformedIncsShuffled[i - 1,:] * (np.sqrt(newTransformedTrajs[i - 1,:] * (1 - newTransformedTrajs[i - 1,:])))
 
-np.savetxt("/Users/abigailkushnir/Desktop/originalFreq", trajectories[250,:])
-np.savetxt("/Users/abigailkushnir/Desktop/tranformedFreq", newTransformedTrajs[250,:])
+#origDevs = findMaxDevs(trajectories,p0,numTrajectories)
+#transformedDevs = findMaxDevs(reverseTransform,p0,numTrajectories)
+
+np.savetxt("/Users/abigailkushnir/Desktop/4999/finalPresentation/trajsScatter", trajectories[100,:])
+np.savetxt("/Users/abigailkushnir/Desktop/4999/finalPresentation/nincsScatter", increments[100,:])
+np.savetxt("/Users/abigailkushnir/Desktop/4999/finalPresentation/newTransInceScatter", transformedIncs[100,:])
 
 # for k in range(0,1000):
 #     print(k);

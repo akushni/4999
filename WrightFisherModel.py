@@ -2,10 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
 
+from discreteKStest import *
+from findMaxDev import *
+
 N = 10000  # population size
-p0 = 0.35 # initial frequency
-t = 500 # number of generations
-numTrajectories = 10**4  # number of trajectories
+p0 = np.random.uniform(0.3, 0.7, 500) #0.35 # initial frequency
+t = 200 # number of generations
+numTrajectories = 500 #10**4  # number of trajectories
 
 s = 0 #np.random.normal(0,0.01,numTrajectories); # drawing a normally distributed s value for each trajectory
 
@@ -51,6 +54,15 @@ for i in range(1, t + 1):  # for each generation
 
 reverseTransform = -0.5 * (np.cos(newFisherTrajs) - 1) # inverse of the transformation
 
+origDevs = findMaxDevs(trajectories,trajectories[0,:],numTrajectories)
+transformedDevs = findMaxDevs(reverseTransform,reverseTransform[0,:],numTrajectories)
+print('Finished')
+#
+# np.savetxt('/Users/abigailkushnir/Desktop/4999/FinalPresentation/trajs', trajectories)
+# np.savetxt('/Users/abigailkushnir/Desktop/4999/FinalPresentation/transformedDevs', transformedDevs)
+
+
+#print(discreteKStest(origDevs, transformedDevs))
 
 # for i in range(100,275,25):
 #     np.savetxt('trajectories'+ str(i),trajectories[i])
