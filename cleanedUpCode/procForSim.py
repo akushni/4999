@@ -2,25 +2,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sp
 import os
+import winsound
 
 from allFunctions_SimAndProc import *
 
 ###################################################################
 
-N = 1000 # population size
+N = 5000 # population size
 t = 60 # number of generations
-numTrajectories = 3*(10**6) # number of trajectories
+numTrajectories = 100000 #3*(10**6) # number of trajectories
 p0 = np.random.uniform(0.4, 0.9, numTrajectories) # initial frequencies
 
 sType = autoRegP # neutral, autoReg, autoRegP or stepFunc
 stepStrength = 0.01 # strength of selection if using step function
-autoRegConst = 0.6 # proportion of previous value maintained if using auto regressive process
+autoRegConst = -0.8 # proportion of previous value maintained if using auto regressive process
+autoRegPDistParam = 0.2 # parameter for geometric distribution if using auto reg. order p process
+autoRegPDegree = 4 # degree for auto reg. process
 
 transformationType = fishersAngular # fishersAngular or variance
 
 ksTestType = continuous # discrete or continuous
 
-coarseGrain = True # True or False
+coarseGrain = False # True or False
 
 filterOutFixed = True # True or False
 
@@ -30,11 +33,11 @@ filterOutFixed = True # True or False
 if sType == neutral:    
     trajectories = simulation(N, t, numTrajectories, p0, sType)
 elif sType == stepFunc:
-    trajectories = simulation(N, t, numTrajectories, p0, sType, stepStrength)
+    trajectories = simulation(N, t, numTrajectories, p0, sType, c = stepStrength)
 elif sType == autoReg:
-    trajectories = simulation(N, t, numTrajectories, p0, sType, autoRegConst)
+    trajectories = simulation(N, t, numTrajectories, p0, sType, c = autoRegConst)
 elif sType == autoRegP:
-    trajectories = simulation(N, t, numTrajectories, p0, sType)
+    trajectories = simulation(N, t, numTrajectories, p0, sType, c = autoRegPDistParam, d = autoRegPDegree)
     
 # coarse graining
 if coarseGrain:
@@ -68,4 +71,5 @@ if ksTestType == discrete:
 elif ksTestType == continuous:
     pVal = sp.stats.kstest(origDevs, transformedDevs).pvalue
 
-os.system('say finished')
+# os.system('say finished')
+winsound.Beep(500,800)

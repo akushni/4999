@@ -1,6 +1,5 @@
 import numpy as np
 import scipy as sp
-import queue
 
 from discreteKStest import *
 from findMaxDev import *
@@ -31,11 +30,7 @@ def s_autoReg(c,s):
     return c * s + np.random.normal(0,0.01,len(s))
 
 # degree p auto regressive selection structure
-def s_autoRegP(sVals, p, t):
-    
-    coeffs = np.zeros(p)
-    for i in range(p): # draw weights from geometric distribution with p = 0.? and centered at 0
-        coeffs[i] = sp.stats.geom.pmf(i, 0.8, -1) 
+def s_autoRegP(sVals, p, t, coeffs):
     
     recentSVals = np.zeros((p, sVals.shape[1]))
     
@@ -53,7 +48,7 @@ def s_autoRegP(sVals, p, t):
     return newSVals
 
 # simulate trajectories
-def simulation(N, t, numTrajs, p0, sType, c = None):
+def simulation(N, t, numTrajs, p0, sType, c = None, d = None):
     
     trajectories = np.zeros((t + 1, numTrajs)) # array to hold frequencies
     
@@ -100,11 +95,17 @@ def simulation(N, t, numTrajs, p0, sType, c = None):
         sVals[0,:] = np.random.normal(0, 0.01, numTrajs)
         trajectories[0, :] = p0 + sVals[0,:] * p0 * (1 - p0) # save first set of frequencies (adjusted for selection)
         
+        degree = d
+        
+        coeffs = np.zeros(degree)
+        for i in range(degree): # draw weights from geometric distribution with p = 0.? and centered at 0
+            coeffs[i] = ((-1)**(i+1))*sp.stats.geom.pmf(i, c, -1) 
+        
         for i in range(1, t+1):
             n = np.random.binomial(N, trajectories[i-1]) # draw from binomial
             p = n/N
         
-            s = s_autoRegP(sVals, 10, i)
+            s = s_autoRegP(sVals, degree, i, coeffs)
            
             trajectories[i,:] = p + s * p * (1 - p) # save new frequencies (adjusted for selection)
             sVals[i] = s # save s values
