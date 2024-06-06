@@ -13,11 +13,13 @@ t = 60 # number of generations
 numTrajectories = 100000 #3*(10**6) # number of trajectories
 p0 = np.random.uniform(0.4, 0.9, numTrajectories) # initial frequencies
 
-sType = autoRegP # neutral, autoReg, autoRegP or stepFunc
+sType = autoRegP # neutral, autoRegP or stepFunc
+
 stepStrength = 0.01 # strength of selection if using step function
-autoRegConst = -0.8 # proportion of previous value maintained if using auto regressive process
-autoRegPDistParam = 0.2 # parameter for geometric distribution if using auto reg. order p process
-autoRegPDegree = 4 # degree for auto reg. process
+autoRegPDistParam = 0.6 # parameter for geometric distribution if using auto reg. order p process (or single coeff. is using AR1)
+autoRegPDegree = 1 # degree for auto reg. process
+
+noiseSTD = 0.01 # standard deviation for noise when using an autoregressive process
 
 transformationType = fishersAngular # fishersAngular or variance
 
@@ -34,10 +36,8 @@ if sType == neutral:
     trajectories = simulation(N, t, numTrajectories, p0, sType)
 elif sType == stepFunc:
     trajectories = simulation(N, t, numTrajectories, p0, sType, c = stepStrength)
-elif sType == autoReg:
-    trajectories = simulation(N, t, numTrajectories, p0, sType, c = autoRegConst)
 elif sType == autoRegP:
-    trajectories = simulation(N, t, numTrajectories, p0, sType, c = autoRegPDistParam, d = autoRegPDegree)
+    trajectories = simulation(N, t, numTrajectories, p0, sType, c = autoRegPDistParam, d = autoRegPDegree, noiseSTD = noiseSTD)
     
 # coarse graining
 if coarseGrain:

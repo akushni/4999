@@ -7,8 +7,7 @@ from findMaxDev import *
 # implemented selection processes
 neutral = 0
 stepFunc = 1
-autoReg = 2
-autoRegP = 3
+autoRegP = 2
 
 # implemented transformations
 fishersAngular = 0
@@ -24,13 +23,9 @@ def s_stepFunction(t, swapPoint, c):
         return c
     else:
         return - c
-    
-# auto regressive (degree 1) selection structure
-def s_autoReg(c,s):
-    return c * s + np.random.normal(0,0.01,len(s))
 
 # degree p auto regressive selection structure
-def s_autoRegP(sVals, p, t, coeffs):
+def s_autoRegP(sVals, p, t, coeffs, noiseSTD):
     
     recentSVals = np.zeros((p, sVals.shape[1]))
     
@@ -43,12 +38,12 @@ def s_autoRegP(sVals, p, t, coeffs):
         
     newSVals = np.zeros(sVals.shape[1])
     for i in range(sVals.shape[1]):
-        newSVals[i] = np.sum(coeffs * recentSVals[:, i]) + np.random.normal(0,0.01)
+        newSVals[i] = np.sum(coeffs * recentSVals[:, i]) + np.random.normal(0,noiseSTD)
         
     return newSVals
 
 # simulate trajectories
-def simulation(N, t, numTrajs, p0, sType, c = None, d = None):
+def simulation(N, t, numTrajs, p0, sType, c = None, d = None, noiseSTD = None):
     
     trajectories = np.zeros((t + 1, numTrajs)) # array to hold frequencies
     
@@ -75,20 +70,6 @@ def simulation(N, t, numTrajs, p0, sType, c = None, d = None):
             trajectories[i,:] = p + s * p * (1 - p) # save new frequencies (adjusted for selection)
 
 
-    elif sType == autoReg:
-
-        s = np.random.normal(0, 0.01, numTrajs)
-        trajectories[0,:] = p0 + s * p0 * (1 - p0)
-
-        for i in range(1, t+1):
-            n = np.random.binomial(N, trajectories[i-1]) # draw from binomial
-            p = n/N
-
-            s = s_autoReg(c,s)
-
-            trajectories[i,:] = p + s * p * (1 - p) # save new frequencies (adjusted for selection)
-
-
     elif sType == autoRegP:
         
         sVals = np.zeros((t + 1, numTrajs)) # initialize array to store s values
@@ -105,7 +86,7 @@ def simulation(N, t, numTrajs, p0, sType, c = None, d = None):
             n = np.random.binomial(N, trajectories[i-1]) # draw from binomial
             p = n/N
         
-            s = s_autoRegP(sVals, degree, i, coeffs)
+            s = s_autoRegP(sVals, degree, i, coeffs, noiseSTD)
            
             trajectories[i,:] = p + s * p * (1 - p) # save new frequencies (adjusted for selection)
             sVals[i] = s # save s values
