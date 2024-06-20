@@ -10,14 +10,14 @@ from allFunctions_SimAndProc import *
 
 N = 5000 # population size
 t = 60 # number of generations
-numTrajectories = 100000 #3*(10**6) # number of trajectories
+numTrajectories = 10000 #3*(10**6) # number of trajectories
 p0 = np.random.uniform(0.4, 0.9, numTrajectories) # initial frequencies
 
 sType = autoRegP # neutral, autoRegP or stepFunc
 
 stepStrength = 0.01 # strength of selection if using step function
 autoRegPDistParam = 0.6 # parameter for geometric distribution if using auto reg. order p process (or single coeff. is using AR1)
-autoRegPDegree = 1 # degree for auto reg. process
+autoRegPDegree = 10 # degree for auto reg. process
 
 noiseSTD = 0.01 # standard deviation for noise when using an autoregressive process
 
